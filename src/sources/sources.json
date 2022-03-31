@@ -740,5 +740,12 @@
     "url": "https://turkcelightnovels.com/",
     "lang": "Turkish",
     "icon": "https://github.com/LNReader/lnreader-sources/blob/main/src/tr/TurkceLightNovels/icon.png?raw=true"
+  },
+  {
+    "sourceId": 111,
+    "sourceName": "LightNovelReader",
+    "url": "https://lightnovelreader.org",
+    "lang": "English",
+    "icon": "https://github.com/LNReader/lnreader-sources/blob/main/src/tr/TurkceLightNovels/icon.png?raw=true"
   }
 ]
