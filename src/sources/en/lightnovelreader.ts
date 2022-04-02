@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio';
-import { SourceChapter, SourceChapterItem, SourceNovelItem } from '../types';
+import { SourceChapter, SourceChapterItem, SourceNovelItem } from "../types";
 
 const sourceId = 111;
 const sourceName = 'LightNovelReader';
@@ -35,76 +35,68 @@ const popularNovels = async (page: number) => {
 
   return { totalPages, novels };
 };
-//TODO: DO THIS
+
 const parseNovelAndChapters = async (novelUrl: string) => {
   const url = novelUrl;
-
   const result = await fetch(url);
   const body = await result.text();
-
   const loadedCheerio = cheerio.load(body);
+  let novel, novelName, author, artist, genre, summary, status;
 
-  let novel;
+  //Novel Cover
+  const novelCover = loadedCheerio('.novels-detail-left > img').attr('src');
 
-  const novelName = loadedCheerio('.block-title > h1').text();
-
-  const novelCover =
-    baseUrl + loadedCheerio('.novel-cover > a > img').attr('src');
-
-  let author, artist, genre, summary, status;
-
-  loadedCheerio('.novel-detail-item').each(function () {
-    const detailName = loadedCheerio(this)
-      .find('.novel-detail-header > h6')
-      .text();
-    const detail = loadedCheerio(this).find('.novel-detail-body').text().trim();
-
-    switch (detailName) {
-      case 'Genre':
-        genre = detail.trim().replace(/\s{2,}/g, ',');
-
+  //Novel Description and Name (They are headers with no specific class)
+  loadedCheerio('.section-header-title > h2').each(function (i,j) {
+    let text = loadedCheerio(this).text()
+    switch (text) {
+      case 'DESCRIPTION':
+        summary = loadedCheerio(this).parentsUntil('.col-md-12').parent().next().text().trim()
         break;
-      case 'Author(s)':
+      case 'CHAPTERS':
+        break;
+      case 'COMMENTS':
+        break;
+      default:
+        novelName = text
+    }
+  })
+
+  //Details about the novel
+  loadedCheerio('.novels-detail-right > ul > li').each(function (i,j:any) {
+    let detailName = loadedCheerio(this).find('.novels-detail-right-in-left').text()
+    let detail = loadedCheerio(this).find('.novels-detail-right-in-right').text().trim()
+    switch (detailName) {
+      case 'Genres:':
+        genre = detail.replace(/\s{2,}/g, ',');
+        break;
+      case 'Author(s):':
         author = detail;
         break;
-      case 'Artist(s)':
+      case 'Artist(s):':
         artist = detail;
         break;
       case 'Description':
         summary = detail;
         break;
-      case 'Status':
+      case 'Status:':
         status = detail;
         break;
     }
   });
 
+  //Chapters
   let chapters: SourceChapterItem[] = [];
-
-  loadedCheerio('.panel').each(function () {
-    let volumeName = loadedCheerio(this).find('h4.panel-title').text();
-
-    loadedCheerio(this)
-      .find('ul.chapter-chs > li')
-      .each(function () {
-        const chapterUrl = baseUrl + loadedCheerio(this).find('a').attr('href');
-
-        let chapterName = loadedCheerio(this).find('a').text();
-
-        const releaseDate = null;
-
-        if (volumeName.includes('Volume')) {
-          chapterName = volumeName + ' ' + chapterName;
-        }
-
-        const chapter = {
-          chapterName,
-          releaseDate,
-          chapterUrl,
-        };
-
-        chapters.push(chapter);
-      });
+  loadedCheerio('.novels-detail-chapters > ul > li > a').each((j,k:any) => {
+    let chapterName = k.children[0].data.trim().replace("CH ","Chapter ")
+    let chapterUrl = k['attribs']['href']
+    let releaseDate = null
+    const chapter = {
+      chapterName,
+      releaseDate,
+      chapterUrl,
+    };
+    chapters.unshift(chapter); // items are sorted in terms of the newest first, so order it backwards instead
   });
 
   novel = {
@@ -126,78 +118,68 @@ const parseNovelAndChapters = async (novelUrl: string) => {
 };
 
 const parseChapter = async (novelUrl: string, chapterUrl: string) => {
-  const url = chapterUrl;
-
-  const result = await fetch(url);
+  const result = await fetch(chapterUrl);
   const body = await result.text();
-
   const loadedCheerio = cheerio.load(body);
+  const chapterName = loadedCheerio('.section-header').find("span").text().trim() ||
+    loadedCheerio('title').text().trim();
 
-  loadedCheerio('.block-title > h1').find('a').remove();
+  // Remove the stuff that's supposed to be hidden
+  loadedCheerio('.hidden').remove()
+  loadedCheerio('.display-hide').each(function () {
+    let element = loadedCheerio(this)
+    element.prev('br').remove()
+    element.next('br').remove()
+    element.remove()
+  })
+  // Remove the Sponsored Content texts
+  loadedCheerio('center:contains("Sponsored Content")').each(function () {
+    let element = loadedCheerio(this)
+    element.prev('p:empty').remove()
+    element.next('p:empty').remove()
+    element.remove()
+  })
+  //Remove any empty centers (usually used on the website to place an ad)
+  loadedCheerio('center').each(function() {
+    let element = loadedCheerio(this)
+    if (element.text() == "") {
+      element.remove()
+    }
+  })
 
-  const chapterName = loadedCheerio('.block-title > h1')
-    .text()
-    .replace(' - ', '');
-
-  loadedCheerio('.alert').remove();
-  loadedCheerio('.hidden').remove();
-  loadedCheerio('iframe').remove();
-  loadedCheerio('button').remove();
-  loadedCheerio('.hid').remove();
-  loadedCheerio('center').remove();
-  loadedCheerio(
-    'div[style="float: left; margin-top: 20px; font-style: italic;margin-left: 50px; font-size: 14px;"]',
-  ).remove();
-  loadedCheerio(
-    'div[style="float:left;margin-top:15px;margin-bottom:15px;"]',
-  ).remove();
-
-  const chapterText = loadedCheerio('.desc').html() || '';
-
+  const chapterText = loadedCheerio('#chapterText').html() || '';
   const chapter: SourceChapter = {
-    sourceId: 2,
+    sourceId,
     novelUrl,
     chapterUrl,
     chapterName,
     chapterText,
   };
-
   return chapter;
 };
 
 const searchNovels = async (searchTerm: string) => {
-  let url = `${searchUrl}${searchTerm}`;
-
-  //console.log(url)
+  let url = searchUrl + searchTerm;
   const response = await fetch(url);
-  //console.log(response)
   const body = await response.json();
+  //Any searches less than 3 do not return any data
   if (body.length == 0) {
     return []
   }
-  //console.log(body.results)
-
-  //let body = await result.json();
-
-
 
   let novels: SourceNovelItem[] = [];
-
   body['results'].forEach((r: any) => {
     const novelUrl = r['link']
     const novelName = r['original_title']
     const novelCover = r['image']
-
     const novel = {
       sourceId,
       novelName,
       novelCover,
       novelUrl,
     };
-
     novels.push(novel);
   });
-
   return novels;
 };
 
