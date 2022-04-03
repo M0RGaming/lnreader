@@ -747,5 +747,12 @@
     "url": "https://lightnovelreader.org",
     "lang": "English",
     "icon": "https://github.com/M0RGaming/lnreader/blob/AddLightNovelReaderOrg/assets/LightNovelReader.png?raw=true"
+  },
+  {
+    "sourceId": 112,
+    "sourceName": "ReLibrary",
+    "url": "https://re-library.com/",
+    "lang": "English",
+    "icon": "https://re-library.com/wp-content/uploads/2019/07/re-library.png"
   }
 ]

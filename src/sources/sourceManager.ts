@@ -111,6 +111,7 @@ import { SourceChapter, SourceNovel, SourceNovelItem } from './types';
 import AllNovelFullScraper from './en/allnovelfull';
 import ReadFreeNovelScraper from './en/readfreenovel';
 import LightNovelReaderScraper from './en/lightnovelreader';
+import ReLibraryScraper from "./en/relibrary";
 
 
 interface PopularNovelsResponse {
@@ -129,6 +130,7 @@ interface Scraper {
 }
 
 export const sourceManager = (sourceId: number): Scraper => {
+  // @ts-ignore
   const scrapers: Record<number, Scraper> = {
     1: BoxNovelScraper,
     2: ReadLightNovelScraper,
@@ -236,7 +238,8 @@ export const sourceManager = (sourceId: number): Scraper => {
     108: AllNovelFullScraper,
     109: ReadFreeNovelScraper,
     110: TurkceLightNovelsScraper,
-    111: LightNovelReaderScraper
+    111: LightNovelReaderScraper,
+    112: ReLibraryScraper
   };
 
   return scrapers[sourceId];
