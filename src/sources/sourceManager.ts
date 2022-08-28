@@ -137,11 +137,13 @@ import AllNovelFullScraper from './en/allnovelfull';
 import ReadFreeNovelScraper from './en/readfreenovel';
 import FreeNovelUpdatesScraper from './en/freenovelupdates';
 import NovelsCafeScraper from './en/NovelsCafe';
-import LightNovelReaderScraper from './en/LightNovelReader';
+import LightNovelReaderScraper from './en/lightnovelreader';
 import HakoLightNovelScraper from './vi/HakoLightNovel';
 import MTNovelScraper from './en/mtnovel';
 import NovelTop1Scraper from './en/noveltop1';
 import { SelectedFilter, SourceFilter } from './types/filterTypes';
+import ReLibraryScraper from "./en/relibrary";
+
 
 interface PopularNovelsResponse {
   totalPages: number;
@@ -168,6 +170,7 @@ interface Scraper {
 }
 
 export const sourceManager = (sourceId: number): Scraper => {
+  // @ts-ignore
   const scrapers: Record<number, Scraper> = {
     1: BoxNovelScraper,
     2: ReadLightNovelScraper,
@@ -304,6 +307,7 @@ export const sourceManager = (sourceId: number): Scraper => {
     139: FicbookScraper,
     140: NovelroomDotnetScraper,
     141: NovelR18Scraper,
+    142: ReLibraryScraper
   };
 
   return scrapers[sourceId];
