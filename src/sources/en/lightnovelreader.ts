@@ -1,7 +1,7 @@
 import * as cheerio from 'cheerio';
 import { SourceChapter, SourceChapterItem, SourceNovelItem } from '../types';
 
-const sourceId = 111;
+const sourceId = 114;
 const sourceName = 'LightNovelReader';
 const baseUrl = 'https://lightnovelreader.org';
 const searchUrl =
