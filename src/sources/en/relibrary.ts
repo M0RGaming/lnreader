@@ -181,7 +181,6 @@ const parseNovelAndChapters = async (novelUrl: string) => {
       .find("p:contains('Status')")
       .text()
       .replace('Status: ', '') || '';
-
   //Chapters
   let chapters: SourceChapterItem[] = [];
   $('.su-subpages a').each(function () {
@@ -249,10 +248,9 @@ const parseChapter = async (novelUrl: string, chapterUrl: string) => {
 //TODO: DO SEARCH NOVELS
 const searchNovels = async (searchTerm: string) => {
   let allDetails = await popularNovels();
-  let novels = allDetails.novels.filter(x => {
+  return allDetails.novels.filter(x => {
     return x.novelName.includes(searchTerm);
   });
-  return novels;
 };
 
 const ReLibraryScraper = {
