@@ -127,7 +127,6 @@ import SakuraNovelScraper from './id/sakuranovel';
 import { SourceChapter, SourceNovel, SourceNovelItem } from './types';
 import AllNovelFullScraper from './en/allnovelfull';
 import FreeNovelUpdatesScraper from './en/freenovelupdates';
-import LightNovelReaderScraper from './en/LightNovelReader';
 import HakoLightNovelScraper from './vi/HakoLightNovel';
 import NovelFullScraper from './en/novelfulldotnet';
 import NovelTop1Scraper from './en/noveltop1';
@@ -161,6 +160,8 @@ import {
 import NovelsOnlineScraper from './en/NovelOnline';
 import SmakolykyTlScraper from './ua/smakolykytl';
 import LitSpaceScraper from './ru/freedlit';
+import LightNovelReaderScraper from './en/lightnovelreader';
+import ReLibraryScraper from "./en/relibrary";
 
 interface PopularNovelsResponse {
   novels: SourceNovelItem[];
@@ -186,6 +187,7 @@ interface Scraper {
   headers?: { [key: string]: string };
 }
 export const sourceManager = (sourceId: number): Scraper => {
+  // @ts-ignore
   const scrapers: Record<number, Scraper> = {
     // @ts-ignore
     0: EPubSource, // @ts-ignore
@@ -336,6 +338,7 @@ export const sourceManager = (sourceId: number): Scraper => {
     166: NOVAScraper, // @ts-ignore
     167: SmakolykyTlScraper, // @ts-ignore
     168: LitSpaceScraper, // @ts-ignore
+    169: ReLibraryScraper, // @ts-ignore
   };
 
   return scrapers[sourceId];

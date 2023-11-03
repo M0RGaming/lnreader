@@ -1027,5 +1027,12 @@
     "url": "https://freedlit.space/",
     "lang": "Russian",
     "icon": "https://freedlit.space/images/fav/apple-touch-icon.png"
+  },
+  {
+    "sourceId": 169,
+    "sourceName": "ReLibrary",
+    "url": "https://re-library.com/",
+    "lang": "English",
+    "icon": "https://re-library.com/wp-content/uploads/2019/07/re-library.png"
   }
 ]
