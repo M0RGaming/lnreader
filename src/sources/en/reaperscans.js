@@ -7,7 +7,7 @@ const sourceId = 67;
 const sourceName = 'ReaperScans';
 
 const popularNovels = async page => {
-  let url = `${baseUrl}/all-series/novels/`;
+  let url = `${baseUrl}/novels?page=${page}`;
   let totalPages = 2;
 
   const result = await fetch(url);
@@ -17,19 +17,14 @@ const popularNovels = async page => {
 
   let novels = [];
 
-  loadedCheerio('.page-item-detail').each(function () {
-    const novelName = loadedCheerio(this)
-      .find('.item-summary h3')
-      .text()
-      .trim();
-    const novelCover = loadedCheerio(this)
-      .find('.img-responsive')
-      .attr('data-src');
+  loadedCheerio('li > div.flex-1').each(function () {
+    const novelName = loadedCheerio(this).find('a.my-2').text().trim();
+    const novelCover = loadedCheerio(this).find('img').attr('src');
 
-    let novelUrl = loadedCheerio(this).find('div > a').attr('href');
+    let novelUrl = loadedCheerio(this).find('a.my-2').attr('href');
 
     if (novelUrl) {
-      novelUrl = novelUrl.replace(`${baseUrl}/series/`, '');
+      novelUrl = novelUrl.replace(`${baseUrl}/novels/`, '');
 
       novels.push({
         sourceId,
@@ -44,7 +39,7 @@ const popularNovels = async page => {
 };
 
 const parseNovelAndChapters = async novelUrl => {
-  const url = `${baseUrl}/series/${novelUrl}`;
+  const url = `${baseUrl}/novels/${novelUrl}`;
 
   const result = await fetch(url);
   const body = await result.text();
@@ -154,13 +149,11 @@ const searchNovels = async searchTerm => {
       .find('.post-title > h3')
       .text()
       .trim();
-    const novelCover = loadedCheerio(this)
-      .find('div > div > a > img')
-      .attr('data-src');
+    const novelCover = loadedCheerio(this).find('a > img').attr('data-src');
 
     let novelUrl = loadedCheerio(this).find('div > div > a').attr('href');
     if (novelUrl) {
-      novelUrl = novelUrl.replace(`${baseUrl}/series/`, '');
+      novelUrl = novelUrl.replace(`${baseUrl}/novels/`, '');
 
       novels.push({
         sourceId,
